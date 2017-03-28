@@ -12,7 +12,6 @@ https://docs.djangoproject.com/en/1.9/ref/settings/
 
 import os
 from datetime import timedelta
-from lcdmarket.api.utils import create_local_user
 
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
@@ -58,7 +57,7 @@ REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': ('rest_framework.permissions.IsAdminUser',),
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework.authentication.SessionAuthentication',
-        'drf_jwt_auth_proxy.authentication.JSONWebTokenAuthentication',
+        'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
     ),
     'DEFAULT_FILTER_BACKENDS': ('rest_framework.filters.DjangoFilterBackend',
                                 'rest_framework.filters.SearchFilter',
@@ -74,14 +73,17 @@ REST_FRAMEWORK = {
 CORS_ORIGIN_ALLOW_ALL = False
 CORS_ALLOW_CREDENTIALS = True
 CORS_ORIGIN_WHITELIST = (
-    'manager.lcdporto.org', 'www.lcdporto.org', 'lcdporto.org',
-    'manager.lcdporto.local', 'www.lcdporto.local', 'lcdporto.local',
-    'localhost:8000', 'market.audienciazero.net'
+    'localhost:8000', 'market.soloweb.pt'
 )
 
-AUTH_SERVER = os.environ['AUTH_SERVER']
-AUTH_SERVER_CREATE_USER_CALLBACK = create_local_user
-AUTH_SERVER_KEY = os.environ['AUTH_SERVER_KEY']
+# AUTHENTICATION - JWT CONFIGURATION
+# For the official docs see: http://getblimp.github.io/django-rest-framework-jwt/
+JWT_AUTH = {
+    'JWT_AUTH_HEADER_PREFIX': 'Bearer',
+    'JWT_ALLOW_REFRESH': True,
+    'JWT_EXPIRATION_DELTA': timedelta(hours=2),
+    'JWT_REFRESH_EXPIRATION_DELTA': timedelta(days=15)
+}
 
 MIDDLEWARE_CLASSES = [
     'django.middleware.security.SecurityMiddleware',
