@@ -1,8 +1,8 @@
 #!/bin/bash
 
-# copy and enable lcd site api virtual server
-cp ./dist/lcdmarket /etc/nginx/sites-available/
-ln -s /etc/nginx/sites-available/lcdmarket /etc/nginx/sites-enabled/lcdmarket
+# copy and enable nginx virtual host configuration
+cp ./dist/api /etc/nginx/sites-available/
+ln -s /etc/nginx/sites-available/api /etc/nginx/sites-enabled/api
 
 # in development mode
 if [ "$APP_IN_PRODUCTION" != "true" ]; then

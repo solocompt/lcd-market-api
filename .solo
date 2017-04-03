@@ -1,0 +1,4 @@
+REPO=marketapi
+CONTAINER=market-api
+TAG=development
+REGISTRY=registry.soloweb.pt/

@@ -10,9 +10,6 @@
 # ignore Dockerfile
 Dockerfile
 
-# ignore docker compose file
-docker-compose.yml
-
 # ignore git
 .git
 .gitignore
@@ -21,14 +18,13 @@ docker-compose.yml
 # ignore coverage files
 .coverage
 .cover
+cover
 
 # ignore static files
-# except default
-lcd/api/static
-!lcd/api/static/media/default_400x400.png
+*/api/static
 
-# ignore sqlite database
-*.sqlite3
+# ignore nose id file
+.noseids
 
-# ignore util scripts
+# ignore utils scripts
 deploy.sh
