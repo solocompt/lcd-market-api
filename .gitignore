@@ -15,7 +15,7 @@ cover
 __pycache__
 
 # ignore static files
-lcdmarket/api/static/
+market/api/static/
 
 # sqlite3 database
 *.sqlite3
@@ -31,3 +31,6 @@ deploy.sh
 
 # ignore runtests
 runtests.sh
+
+#ignore solo file
+.solo
