@@ -39,3 +39,5 @@ class AccountAdmin(admin.ModelAdmin):
         context = {'accounts': queryset, 'product_form': form, 'opts': opts, 'app_label': app_label}
         return render_to_response('admin/apply_fine.html', context, RequestContext(request))
 
+
+admin.site.register(models.Account, AccountAdmin)
