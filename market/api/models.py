@@ -231,12 +231,13 @@ def update_balance(instance, sender, **kwargs):
     """
     Update origin and destination accounts
     """
-    instance.account.balance -= instance.amount
-    instance.target_account.balance += instance.amount
+    if not instance.is_pendent:
+        instance.account.balance -= instance.amount
+        instance.target_account.balance += instance.amount
     
-    for account in [instance.account, instance.target_account]:
-        #account.balance = get_balance(account)
-        account.save()
+        for account in [instance.account, instance.target_account]:
+            #account.balance = get_balance(account)
+            account.save()
 
 @receiver(post_save, sender=Transfer)
 def update_product_quantity(instance, sender, **kwargs):
