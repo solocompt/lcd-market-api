@@ -6,7 +6,7 @@ from rest_framework import status
 from rest_framework.test import APITestCase
 from rest_framework.response import Response
 
-from lcdmarket.api.tests.clients import MarketAPIClient
+from market.api.tests.clients import MarketAPIClient
 
 def check_response_type(response):
     """

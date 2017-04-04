@@ -3,8 +3,8 @@ Testing Transfers
 """
 
 import logging
-from lcdmarket.api.tests.testcases import MarketAPITestCase
-from lcdmarket.api.tests.factories import TransferFactory, AccountFactory, ProductFactory, SystemFactory
+from market.api.tests.testcases import MarketAPITestCase
+from market.api.tests.factories import TransferFactory, AccountFactory, ProductFactory, SystemFactory
 
 # change default factory boy logging level
 logging.getLogger("factory").setLevel(logging.WARN)

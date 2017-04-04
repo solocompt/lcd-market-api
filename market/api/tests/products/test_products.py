@@ -4,8 +4,8 @@ Testing Products
 
 import logging
 
-from lcdmarket.api.tests.testcases import MarketAPITestCase
-from lcdmarket.api.tests.factories import ProductFactory, AccountFactory
+from market.api.tests.testcases import MarketAPITestCase
+from market.api.tests.factories import ProductFactory, AccountFactory
 
 
 # change default factory boy logging level

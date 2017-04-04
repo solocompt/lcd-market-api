@@ -5,7 +5,7 @@ Factory Boy Factory Definition
 from factory.django import DjangoModelFactory as Factory
 from factory import LazyAttribute, Sequence, SubFactory
 
-from lcdmarket.api import models
+from market.api import models
 
 class ProductFactory(Factory):
     """
