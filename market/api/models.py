@@ -136,7 +136,7 @@ class Product(models.Model):
 class Transfer(models.Model):
     name = models.CharField(max_length=50, null=True, blank=True)
     amount = models.PositiveIntegerField(validators=[MinValueValidator(1)])
-    product = models.ForeignKey('Product', null=True)
+    product = models.ForeignKey('Product', null=True, blank=True)
     account = models.ForeignKey('Account', related_name='origin')
     target_account = models.ForeignKey('Account', related_name='target', null=True)
     is_pendent = models.BooleanField(default=True)
