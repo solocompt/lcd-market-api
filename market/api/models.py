@@ -231,8 +231,11 @@ def update_balance(instance, sender, **kwargs):
     """
     Update origin and destination accounts
     """
+    instance.account.balance -= instance.amount
+    instance.target_account += instance.amount
+    
     for account in [instance.account, instance.target_account]:
-        account.balance = get_balance(account)
+        #account.balance = get_balance(account)
         account.save()
 
 @receiver(post_save, sender=Transfer)

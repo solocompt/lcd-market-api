@@ -8,7 +8,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.decorators import detail_route, list_route
 
-from market.api import models, serializers
+from market.api import models, serializers, utils, emails
 
 class AccountViewSet(viewsets.ModelViewSet):
     """

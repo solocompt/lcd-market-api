@@ -57,3 +57,10 @@ class TransferFactory(Factory):
         Metaclass Definition
         """
         model = models.Transfer
+
+def get_system():
+    try:
+        system = models.Account.objects.get(is_system=True)
+    except models.DoesNotExist:
+        system = SystemFactory()
+    return system

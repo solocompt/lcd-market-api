@@ -4,7 +4,7 @@ Testing Transfers
 
 import logging
 from market.api.tests.testcases import MarketAPITestCase
-from market.api.tests.factories import TransferFactory, AccountFactory, ProductFactory, SystemFactory
+from market.api.tests.factories import TransferFactory, AccountFactory, ProductFactory, SystemFactory, get_system
 
 # change default factory boy logging level
 logging.getLogger("factory").setLevel(logging.WARN)
@@ -30,7 +30,7 @@ class TransfersApi(MarketAPITestCase):
         """
         Ensures guest cannot take a offer from market - transfer from system to user
         """
-        system = SystemFactory()
+        system = get_system()
         product = ProductFactory(name = 'P_X', value = 50, is_approved = True, seller = system, is_reward = True)
         transfer = {
             'product' : product.pk,
@@ -44,7 +44,7 @@ class TransfersApi(MarketAPITestCase):
         """
         Ensures user can take a offer from market
         """
-        system = SystemFactory()
+        system = get_system()
         product = ProductFactory(name='P_X', value=50, is_approved=True, seller=system, is_reward = True)
         user = AccountFactory(balance = 100)
         self.client.force_authenticate(user)
@@ -78,7 +78,7 @@ class TransfersApi(MarketAPITestCase):
         """
         Ensures user can buy something from system
         """
-        system = SystemFactory()
+        system = get_system()
         product = ProductFactory(name='P_X', value=50, is_approved=True, seller=system)
         user = AccountFactory(balance=100)
         self.client.force_authenticate(user)
