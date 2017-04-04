@@ -14,6 +14,7 @@ from market.api import views
 
 ROUTER = routers.DefaultRouter()
 ROUTER.register(r'accounts', views.AccountViewSet, 'account')
+ROUTER.register(r'products', views.ProductViewSet, 'product')
 
 urlpatterns = [
     url(r'^', include(ROUTER.urls)),

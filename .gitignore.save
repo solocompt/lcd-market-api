@@ -1,0 +1,32 @@
+# linux temporary files
+*~
+
+# emacs temporary files
+\#*\#
+
+# ignore pycharm files
+.idea
+
+# ignore coverage files
+.coverage
+cover
+
+# python cache
+__pycache__
+
+# ignore static fileslcdmarket/api/static/
+
+# sqlite3 database
+*.sqlite3
+
+# ignore docker compose file
+docker-compose.yml
+
+# ignore util scripts
+deploy.sh
+
+# ignores nose ids
+.noseids
+
+# ignore runtests
+runtests.sh

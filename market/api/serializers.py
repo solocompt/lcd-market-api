@@ -27,3 +27,24 @@ class AccountSerializer(serializers.ModelSerializer):
                   'is_staff', 'is_active', 'created', 'updated', )
         read_only_fields = ('is_staff', 'is_active', 'is_superuser', 'balance', 'created', 'updated', 'balance')
 
+
+class ProductSerializer(serializers.ModelSerializer):
+    """
+    Product Serializer
+    """
+
+    def __init__(self, *args, **kwargs):
+        """
+        Overrides init to provide a mechanism to change
+        read_only_fields on runtime
+        """
+        override_is_approved = kwargs.pop('override_is_approved', None)
+        super(ProductSerializer, self).__init__(*args, **kwargs)
+        if override_is_approved:
+            self.fields['is_approved'].read_only = False
+
+    class Meta:
+        model = models.Product
+        fields = ('id', 'name', 'description', 'value', 'is_approved', 'quantity', 'is_fine', 'is_reward', 'seller')
+        read_only_fields = ('is_approved', 'seller')
+

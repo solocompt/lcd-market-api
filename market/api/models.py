@@ -113,3 +113,21 @@ class Account(AbstractBaseUser):
         """
         Transfer.objects.create(product=fine, account=self)
 
+
+class Product(models.Model):
+    """
+    Products with null quantity means unlimited
+    """
+    name = models.CharField(max_length=50)
+    description = models.TextField(null=True)
+    value = models.IntegerField(null=False)
+    is_approved = models.BooleanField(default=False)
+    is_fine = models.BooleanField(default=False)
+    is_reward = models.BooleanField(default=False)
+    quantity = models.PositiveSmallIntegerField(null=True, default=None, blank=True)
+    created = models.DateTimeField(auto_now_add=True)
+    updated = models.DateTimeField(auto_now=True)
+    seller = models.ForeignKey('Account', default=Account.objects.get(is_system=True).pk)
+
+    def __str__(self):
+        return self.name

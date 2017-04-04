@@ -37,3 +37,36 @@ class AccountViewSet(viewsets.ModelViewSet):
         if self.request.user.is_anonymous():
             kwargs['guest_view'] = True
         return super(AccountViewSet, self).get_serializer(*args, **kwargs)
+
+
+class ProductViewSet(viewsets.ModelViewSet):
+    """
+    Product View Set
+    """
+    serializer_class = serializers.ProductSerializer
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+    search_fields = ('name', 'description')
+    filter_fields = ('value', 'is_approved', 'quantity', 'is_fine')
+
+    def perform_create(self, serializer):
+        obj = serializer.save(seller=self.request.user)
+        if not (self.request.user.is_system and self.is_approved):
+            data = {'product': obj}
+            utils.to_system(emails.ProductSuggested, **data)
+
+    def get_queryset(self):
+        queryset = models.Product.objects.all()
+        if self.request.user.is_authenticated() and self.request.user.is_system:
+            return queryset
+        return queryset.filter(is_approved=True).exclude(quantity=0)
+
+    def get_serializer(self, *args, **kwargs):
+        """
+        Passes extra kwarg to serializer class
+        if user is admin, to allow for read_only_fields
+        modification on runtime
+        """
+        if self.request.user.is_authenticated() and self.request.user.is_system:
+            kwargs['override_is_approved'] = True
+        return super(ProductViewSet, self).get_serializer(*args, **kwargs)
+
