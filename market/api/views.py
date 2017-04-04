@@ -70,3 +70,25 @@ class ProductViewSet(viewsets.ModelViewSet):
             kwargs['override_is_approved'] = True
         return super(ProductViewSet, self).get_serializer(*args, **kwargs)
 
+
+class TransferViewSet(viewsets.ModelViewSet):
+    """
+    Transfer View Set
+    """
+    queryset = models.Transfer.objects.all()
+    serializer_class = serializers.TransferSerializer
+    permission_classes = [permissions.IsAuthenticated]
+    filter_fields = ('is_pendent', 'account', 'target_account', 'product', 'amount')
+
+    def perform_create(self, serializer):
+        serializer.save(account=self.request.user)
+
+    def get_serializer(self, *args, **kwargs):
+        """
+        Passes extra kwarg to serializer class
+        if user is admin, to allow for read_only_fields
+        modification on runtime
+        """
+        if self.request.user.is_authenticated() and self.request.user.is_system:
+            kwargs['override_is_pendent'] = True
+        return super(TransferViewSet, self).get_serializer(*args, **kwargs)

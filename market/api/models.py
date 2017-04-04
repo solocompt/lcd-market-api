@@ -131,3 +131,115 @@ class Product(models.Model):
 
     def __str__(self):
         return self.name
+
+
+class Transfer(models.Model):
+    name = models.CharField(max_length=50, null=True, blank=True)
+    amount = models.PositiveIntegerField(validators=[MinValueValidator(1)])
+    product = models.ForeignKey('Product', null=True)
+    account = models.ForeignKey('Account', related_name='origin')
+    target_account = models.ForeignKey('Account', related_name='target', null=True)
+    is_pendent = models.BooleanField(default=True)
+    description = models.TextField(null=True)
+    created = models.DateTimeField(auto_now_add=True)
+    updated = models.DateTimeField(auto_now=True)
+
+    def __init__(self, *args, **kwargs):
+        """
+        Overring init to track is_pendent state
+        """
+        super(Transfer, self).__init__(*args, **kwargs)
+        self.__original_is_pendent = self.is_pendent
+
+    def __str__(self):
+        return 'transfer ' + str(self.id)
+
+    def check_balance(self):
+        """
+        Check if origin account has suficient funds
+        """
+        if self.amount > self.account.balance:
+            raise InsuficientFunds
+
+    def request_transfer(self):
+        """
+        For now product transactions are
+        requests for a transfer
+        """
+        if not self.pk:
+            self.amount = self.product.value
+            self.description = self.product.name
+            if self.product.is_reward:
+                self.target_account = self.account
+                self.account = Account.objects.get(is_system=True)
+                data = {'transfer': self}
+                utils.to_system(emails.RequestCreated, **data)
+            else:
+                self.target_account = self.product.seller
+                if self.product.is_fine:
+                    self.is_pendent = False
+
+
+
+    def set_transfer_description(self):
+        """
+        Returns transfer description or default
+        """
+        if not self.description:
+            message = 'transfer from {0} to {1}'
+            self.description = message.format(
+                self.account.full_name, self.target_account.full_name)
+
+    def send_confirmation_email(self):
+        """
+        If pendent state changes to false
+        send email to user
+        """
+        if self.is_pendent == False and self.is_pendent != self.__original_is_pendent:
+            data = {'transfer': self}
+            utils.to_user(emails.RequestApproved, self.target_account, **data)
+
+    def save(self, *args, **kwargs):
+        # check if this is a product transaction
+        # or a simple value transfer
+        if not self.product:
+            self.check_balance()
+            self.is_pendent=False
+            self.set_transfer_description()
+        else:
+            # system or other user as seller
+            self.request_transfer()
+        # send email to user
+        self.send_confirmation_email()
+        super(Transfer, self).save(*args, **kwargs)
+
+def aggregate(manager):
+    """
+    Return related manager sum aggregate
+    """
+    return manager.exclude(is_pendent=True).aggregate(
+        Sum(F('amount')))['amount__sum'] or 0
+
+def get_balance(account):
+    """
+    Return account balance
+    """
+    return aggregate(account.target) - aggregate(account.origin)
+
+@receiver(post_save, sender=Transfer)
+def update_balance(instance, sender, **kwargs):
+    """
+    Update origin and destination accounts
+    """
+    for account in [instance.account, instance.target_account]:
+        account.balance = get_balance(account)
+        account.save()
+
+@receiver(post_save, sender=Transfer)
+def update_product_quantity(instance, sender, **kwargs):
+    """
+    Update product quantity
+    """
+    if instance.product and not instance.is_pendent and instance.product.quantity:
+        instance.product.quantity -= 1
+        instance.product.save()

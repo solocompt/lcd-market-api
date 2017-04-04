@@ -48,3 +48,29 @@ class ProductSerializer(serializers.ModelSerializer):
         fields = ('id', 'name', 'description', 'value', 'is_approved', 'quantity', 'is_fine', 'is_reward', 'seller')
         read_only_fields = ('is_approved', 'seller')
 
+
+class TransferSerializer(serializers.ModelSerializer):
+    """
+    Transfer Serializer
+    """
+    amount = serializers.IntegerField(min_value=1, required=False)
+    product = serializers.PrimaryKeyRelatedField(
+        allow_null=True,
+        queryset=models.Product.objects.filter(is_approved=True).exclude(quantity=0),
+        required=False
+    )
+
+    def __init__(self, *args, **kwargs):
+        """
+        Overrides init to provide a mechanism to change
+        read_only_fields on runtime
+        """
+        override_is_pendent = kwargs.pop('override_is_pendent', None)
+        super(TransferSerializer, self).__init__(*args, **kwargs)
+        if override_is_pendent:
+            self.fields['is_pendent'].read_only = False
+
+    class Meta:
+        model = models.Transfer
+        fields = ('id', 'amount', 'product', 'account', 'target_account', 'is_pendent', 'description', 'created', 'updated')
+        read_only_fields = ('account', 'is_pendent')

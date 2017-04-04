@@ -98,5 +98,28 @@ class ProductAdmin(admin.ModelAdmin):
         self.message_user(request, "The selected products were marked as fines, total products changed {0}.".format(rows))
 
 
+class TransferAdmin(admin.ModelAdmin):
+    """
+    Transfer Admin
+    """
+    list_display = ('transfer', 'name', 'account', 'target_account', 'amount', 'is_pendent')
+    list_filter = ('amount', 'is_pendent')
+    actions = ['approve_transfer']
+    icon = '<i class="material-icons">swap_horiz</i>'
+
+    def transfer(self, obj):
+        return 'Transfer {0}'.format(obj.pk)
+
+    def approve_transfer(self, request, queryset):
+        """
+        Bulk action to approve pendent transfers
+        """
+        # we cannot use update here
+        for transfer in queryset:
+            transfer.is_pendent=False
+            transfer.save()
+        self.message_user(request, "The selected transfers have been approved.")
+
 admin.site.register(models.Account, AccountAdmin)
 admin.site.register(models.Product, ProductAdmin)
+admin.site.register(models.Transfer, TransferAdmin)
